@@ -1,3 +1,9 @@
+/**
+ * CacheAdapter
+ *  We use this class to store the data.
+ *  @todo
+ *  Store the huge ICO in different storage.
+ */
 class CacheAdapter {
     constructor(ico){
         this.ico = ico;

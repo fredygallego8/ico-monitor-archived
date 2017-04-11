@@ -12,7 +12,12 @@ web3.setProvider(new web3.providers.HttpProvider(`http://${config.host}:${config
 const providers = config.icos;
 
 
-
+/**
+ * This class to handle any thing retalted the DOM.
+ * @append : tot add the transactions on the table
+ * @transactionsCount: change the transactions count
+ * @loader: toggle the spin that comes before loading any data.
+ */
 class Dom{
     constructor(){
         console.log("Dom start" , providers)
@@ -50,6 +55,13 @@ class Dom{
 
 }
 
+/**
+ * Chart Manager, this class that manage the charts that
+ * describe the ic transactions.
+ * @draw: the function that draw the chart
+ *
+ */
+
 class ChartManeger{
     constructor(){
         this.chartColors = {
@@ -61,11 +73,6 @@ class ChartManeger{
             purple: 'rgb(153, 102, 255)',
             grey: 'rgb(201, 203, 207)'
         };
-    }
-
-
-    randomScalingFactor() {
-        return (Math.random() > 0.5 ? 1.0 : -1.0) * Math.round(Math.random() * 100);
     }
 
     draw(chartData){
@@ -129,17 +136,32 @@ class ChartManeger{
 
 }
 
+/**
+ * @param ICONAME
+ * this function that start the application by passing the ico name as parameter
+ */
 function init(ICONAME){
     /* Implementation */
+
+    // Get ICO data from the config
     let icoConfig = providers[ICONAME];
     let dom = new Dom();
 
+    // ICO instance
     let ico = new ICO(web3,icoConfig['address'] , ICONAME, icoConfig['abi']);
 
     console.log("Number of blocks",ico.getBlockNumbers());
 
+    // cache instance
     let cache = new CacheAdapter(ico);
 
+
+    /**
+     * Start fetching the transactions and store them into the cache if that written in the config.js
+     * @todo
+     * - Convert the tokens into the original numbers by dividing it (10**x)
+     * - Make the chart more dynamic to exand the period by hours
+     */
     ico.fetch(function (results , error) {
         if ( error !== null){
             alert(error);
@@ -147,31 +169,51 @@ function init(ICONAME){
         }
         console.log(results);
 
+        // Start the spinner until the data loading will be finished
         dom.loader(true , function(){
 
+            // items is the transactions stored in the cache before for the current ICO
             let items = cache.get()['data'];
 
+            // i is an iterator to know the number of transactions
             let i = 0;
+
+            // if the number the transactions is one, that means he start fetching the data from the last block number that we store.
             if(results.length > 1 )
                 results.map((result )=> {
 
+                    // get the original transaction by hash
                     let tx = web3.eth.getTransaction(result.transactionHash);
+
+                    // check if the ICO is cachable?  see config.js
                     if (icoConfig.hasOwnProperty('enableCache') && icoConfig.enableCache)
                         cache.save(result, tx);
 
+                    // now will push the results into items.
                     items.push(ico.toJson(result, tx))
                 });
 
+
+            // iterate ove the items to manipulate them by DOM class
             for(let j = 0 ; j < items.length ; j++){
                 let result = items[i];
+
+                // change the current value into ether by web3.fromWei
                 let etherValue = web3.fromWei( result.tx.value , "ether").valueOf();
                 let sender = typeof icoConfig.args.sender !== "undefined"?result.result.args[icoConfig.args.sender]: result.tx.from;
+
+
                 let tokenNumbers = result.result.args[icoConfig.args.tokens].valueOf();
                 i++;
+
+                // append the csv variable that define at the top by its values
                 ico.appendToCSV(sender, etherValue, tokenNumbers);
 
+                //convert timestamp into date
                 let txDate = new Date(result.tx.timestamp*1000);
 
+
+                // get date with format d/m/y to be the uniqe key for the charts
                 let currentDate = (txDate.getDate() + '/' + (txDate.getMonth()+1) + '/' + txDate.getFullYear());
                 if (typeof ico.chartData[currentDate] === "undefined"){
                     ico.chartData[currentDate] = 0;
@@ -181,12 +223,11 @@ function init(ICONAME){
                 dom.append(txDate , sender , etherValue , tokenNumbers);
 
                 dom.transactionsCount(i);
+
+                //turn the spinner off
                 dom.loader(false);
 
             }
-
-
-
         });
 
 
