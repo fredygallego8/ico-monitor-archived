@@ -10,7 +10,7 @@ module.exports ={
             customArgs:{
                 _from :"0x0000000000000000000000000000000000000000"
             },
-            enableCache:true,
+            enableCache:false,
             fromBlock:2607801,
             toBlock:3517758
         } ,
@@ -21,7 +21,7 @@ module.exports ={
             args:{
                 tokens: 'amount',
             },
-            enableCache:true,
+            enableCache:false,
             fromBlock:3175204,
             toBlock:3199427,
         },
@@ -33,7 +33,7 @@ module.exports ={
                 tokens:'value',
                 sender: 'to'
             },
-            enableCache:true,
+            enableCache:false,
             fromBlock:	3399337,
             toBlock:	3517648,
             decimal:6
@@ -62,9 +62,8 @@ module.exports ={
         }
     },
     host:'https://mainnet.infura.io/My9Aw8U1yEqmchLYRKXK',
-//    host:'http://localhost:8545',
     port:'8545',
-    skipBlocks:1000,
+    skipBlocks:100,
     defaultDecimal:18,
     defaultEtherFactor:1000
 };

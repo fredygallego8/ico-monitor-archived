@@ -16,7 +16,7 @@
 <body>
 <div class="container">
   <div id="loader" class='uil-pie-css'><div></div><div></div><div></div><div></div></div>
-  <h1>Neufund Analyser</h1>
+  <h1>Neufund</h1>
 
   <div class="jumbotron">
     <div class="row">
@@ -27,19 +27,19 @@
     </div>
 
     <div class="row">
-      <div class="col-md-6">
-        <span >Total Transactions <span class="badge" id="transaction_number">0</span></span>
-        <br/>
-        <a href="#" id="download_csv">Download csv file</a>
+    <div class="col-md-6">
+      <span >Total Transactions <span class="badge" id="transaction_number">0</span></span>
+      <br/>
+      <a href="#" id="download_csv">Download csv file</a>
 
-      </div>
-      <div class="col-md-6">
-        <span>Total people who invest more than one time <span class="badge" id="duplicated_tx">0</span></span>
-        <br/>
-        <button id="charts" href="#">Charts</button>
-      </div>
     </div>
-    <br>
+    <div class="col-md-6">
+      <span>Total people who invest more than one time <span class="badge" id="duplicated_tx">0</span></span>
+      <br/>
+      <button id="charts" href="#">Charts</button>
+    </div>
+  </div>
+  <br>
   </div>
   <div class="charts">
     <canvas id="canvas"></canvas>

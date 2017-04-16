@@ -1,7 +1,13 @@
 import CacheAdapter from './CacheAdapter.js'
 import { default as config } from './config.js'
+import 'babel-polyfill';
 
 const providers = config.icos;
+
+
+
+//let tx = await makePromise(web3.eth.getTransaction)('latest');
+
 
 class ICO{
 
@@ -16,27 +22,35 @@ class ICO{
         this.csvContent = "data:text/csv;charset=utf-8,";
         this.csvContent += ["Transaction Maker", "Value in Eth", "Number of token"].join(",") + "\n";
         this.chartData = {};
+
     }
     getBlockNumbers(){
         return this.blockNumbers;
     }
+    getTransaction(results){
 
-    fetch(callback){
+    }
+    fetch(from  ,callback){
+        let self = this;
         const customArgs = this.currentIco.hasOwnProperty('customArgs')?this.currentIco.customArgs:{};
-        let startBlockNumber = this.getBlockNumbers(); // start from the last block number
 
-        let event = eval(`this.smartContract.${this.currentIco.event}`)(customArgs,{fromBlock:startBlockNumber, toBlock: 'latest'});
+        let startBlockNumber = 	from; // start from the last block number
+        let amount = config.skipBlocks;
+
+        from = from + amount;
+        let items = [];
+        let event = eval(`this.smartContract.${this.currentIco.event}`)(customArgs,{fromBlock:from, toBlock: from+amount});
 
         event.get((error, results) => {
-            if (error) {
-                console.log("ERROR" , error);
-                event.stopWatching();
-                callback(results, error);
-                return
+
+            if (error && results.length === 0) {
+                console.log("ERROR", error);
+                callback(error , null, null);
+                return;
             }
-            this.blockNumbers = this.web3.eth.getTransaction(results[results.length -1].transactionHash).blockNumber;
-            callback(results , null);
+            callback(null, results);
         });
+
     }
 
     generateCSV(){
@@ -49,7 +63,6 @@ class ICO{
     }
 
     toJson(block , tx){
-        this.blockNumbers = tx.blockNumber;
         return {
             'result': {
                 args:block.args,
@@ -61,8 +74,7 @@ class ICO{
                 gas:tx.gas,
                 blockNumber:tx.blockNumber,
                 to:tx.to,
-                value:tx.value,
-                timestamp: this.web3.eth.getBlock(tx.blockNumber).timestamp
+                value:tx.value
             }}
     }
 }

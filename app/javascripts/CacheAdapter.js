@@ -13,13 +13,12 @@ class CacheAdapter {
         const icoData = this.get();
         console.log(icoData);
         icoData.data.push(this.ico.toJson(record[0] , record[1])); // save result , transaction
-        icoData.lastBlockNumber = this.ico.getBlockNumbers();
+        icoData.lastBlockNumber = record[1].blockNumber;
 
         localStorage.setItem(key , JSON.stringify(icoData) );
     }
     get(){
         let data = JSON.parse( localStorage.getItem(this.ico.name) );
-
 
         if (data === null || !data.hasOwnProperty('lastBlockNumber')){ //ICO not saved before.
             data = {};
