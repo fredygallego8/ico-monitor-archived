@@ -7,7 +7,7 @@ import jQuery from 'jquery';
  * @draw: the function that draw the chart
  *
  */
-class ChartManeger{
+class ChartManager{
     constructor(){
         this.chartColors = {
             red: 'rgb(255, 99, 132)',
@@ -101,7 +101,7 @@ class ChartManeger{
 class Dom{
     constructor(){
 //        console.log("Dom start" , providers);
-        this.chart = new ChartManeger();
+        this.chart = new ChartManager();
     }
 
     append(...data){
@@ -127,7 +127,7 @@ class Dom{
     }
 
     chartButtonOnClick(ico){
-        let chart = new ChartManeger();
+        let chart = new ChartManager();
         jQuery('#charts').click(function() {
             jQuery('.charts').toggle();
 
@@ -136,7 +136,12 @@ class Dom{
 
         });
     }
-
+    content(id , text = null){
+        return text?jQuery(`#${id}`).html(text): jQuery(`#${id}`).html();
+    }
+    reset(){
+        jQuery('span').html("")
+    }
 }
 
 export default Dom;
