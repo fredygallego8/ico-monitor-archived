@@ -14,21 +14,35 @@
 
 </head>
 <body>
-<div class="container">
+<div >
   <div id="loader" class='uil-pie-css'><div></div><div></div><div></div><div></div></div>
+  <div id = "app"></div>
+
   <h1>Neufund Analyser</h1>
 
-  <div class="jumbotron">
+  <div class="well">
     <div class="row">
-      <select id="smart-contract" class="input-control">
-        <option>-</option>
-      </select>
-
+      <div class="col-md-6">
+        <select id="smart-contract" class="form-control">
+          <option>Select the ICO</option>
+        </select>
+      </div>
+      <div class="col-md-6">
+        <select id="currency-selector" class="form-control">
+          <option>Select the currency</option>
+        </select>
+      </div>
     </div>
-  <div class="row">
-    <textarea id="status"></textarea>
-  </div>
+    <br/>
+
     <div class="row">
+      <div class="col-md-12">
+        <textarea class="form-control" id="status" rows="5"></textarea>
+
+      </div>
+    </div>
+
+    <div class="container">
       <div class="col-md-6">
         <h3>Overall</h3>
         <table class="table">
@@ -36,7 +50,7 @@
           <tr><th>Ico ends </th><td><span class="" id="ico_ends">0</span></td></tr>
           <tr><th>duration </th><td><span class="" id="duration">0</span></td></tr>
           <tr><th>currency raised </th><td><span class="" id="currency_raised">0</span></td></tr>
-          <tr><th>currency raised </th><td><span class="" id="currency_raised_euro">0</span></td></tr>
+          <tr><th>currency raised <span class="currency"></span></th><td><span class="" id="currency_raised_euro">0</span></td></tr>
           <tr><th>Tokens created </th><td><span class="" id="tokens_created">0</span></td></tr>
           <tr><th>Number of investors </th><td><span class="" id="number_of_investors">0</span></td></tr>
           <tr><th>Average investment size in currency) </th><td><span class="badge" id="agv_investment_currency">0</span></td></tr>
@@ -50,22 +64,22 @@
       <div class="col-md-6">
         <h3>Investors</h3>
         <table class="table">
-          <tr><th>Number of investors > 100k EUR </th><td><span class="" id="investors_gk100">0</span></td></tr>
-          <tr><th>Number of investors > 5 – 100k EUR </th><td><span class="" id="investors_5100k">0</span></td></tr>
-          <tr><th>Number of investors < 5k EUR </th><td><span class="" id="investors_l5k">0</span></td></tr>
+          <tr><th>Number of investors > 100k <span class="currency"></span> </th><td><span class="" id="investors_gk100">0</span></td></tr>
+          <tr><th>Number of investors > 5 – 100k <span class="currency"></span> </th><td><span class="" id="investors_5100k">0</span></td></tr>
+          <tr><th>Number of investors < 5k <span class="currency"></span> </th><td><span class="" id="investors_l5k">0</span></td></tr>
           <tr><th>Number of investors that invested more than once </th><td><span class="" id="investors_more_once">0</span></td></tr>
         </table>
         <h3>Transactions</h3>
         <table class="table">
           <tr><th>Number of transactions </th><td><span class="" id="transaction_number">0</span></td></tr>
-          <tr><th>Maximum investment (currency/Tokens)</th><td><span class="" id="max_investment">0</span></td></tr>
+          <tr><th>Maximum investment (<span class="currency"></span>/Tokens)</th><td><span class="" id="max_investment">0</span></td></tr>
           <tr><th>Minimum transactions </th><td><span class="" id="min_investment">0</span></td></tr>
         </table>
 
         <h3>Time</h3>
         <table class="table">
           <tr><th>Time</th><td><span id="time"></span></td></tr>
-          <tr><th>Ether/Euro</th><td><span id="ether_euro"></span></td></tr>
+          <tr><th>Ether/<span class="currency"></span></th><td><span id="ether_euro"></span></td></tr>
 
         </table>
         <button id="charts" href="#">Charts</button>
@@ -76,7 +90,7 @@
   <div class="charts">
     <canvas id="canvas"></canvas>
   </div>
-  <div class="data-content">
+  <div class="data-content container" style="display: none">
     <div id="data" class="table table-striped table-bordered table-hovered">
       <ul>
         <li >Date</li>

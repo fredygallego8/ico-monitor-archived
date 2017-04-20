@@ -32,12 +32,18 @@ class ICO{
 
     }
     fetch(from  ,callback){
-        let self = this;
         const customArgs = this.currentIco.hasOwnProperty('customArgs')?this.currentIco.customArgs:{};
         let amount = config.skipBlocks;
+        let configToBlock = this.currentIco.toBlock;
 
 //        let event = eval(`this.smartContract.${this.currentIco.event}`)(customArgs,{fromBlock:from, toBlock: from+amount,topics: ["LogTake"]} );
-        let event = this.smartContract[this.currentIco.event](customArgs,{fromBlock:0, toBlock: 'latest'} );
+        if(typeof from === "string") {
+            return;
+        };
+
+        let toBlock = configToBlock-from < 100000?'latest':from+amount;
+
+        let event = this.smartContract[this.currentIco.event](customArgs,{fromBlock:from, toBlock: toBlock} );
 //        let event = this.web3.eth.filter({fromBlock:0, toBlock: 'latest', address: this.address});
 
         event.get((error, results) => {
@@ -47,7 +53,7 @@ class ICO{
                 callback(error , null, null);
                 return;
             }
-            callback(null, results);
+            callback(null, results , toBlock);
         });
 
     }
