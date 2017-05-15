@@ -1,0 +1,187 @@
+.uil-pie-css {
+  width: 200px;
+  height: 200px;
+
+  transform: scale(0.95);
+  position: fixed;
+  background: none;
+  border-radius: 50%;
+  top: 40%;
+  left: 40%;
+  display: none;
+}
+
+@-webkit-keyframes uil-pie-rotate {
+  0% {
+    -ms-transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+    -moz-transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+    -webkit-transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+    -o-transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+    transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+  }
+  100% {
+    -ms-transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+    -moz-transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+    -webkit-transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+    -o-transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+    transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+  }
+}
+@-webkit-keyframes uil-pie-rotate {
+  0% {
+    -ms-transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+    -moz-transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+    -webkit-transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+    -o-transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+    transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+  }
+  100% {
+    -ms-transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+    -moz-transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+    -webkit-transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+    -o-transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+    transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+  }
+}
+@-moz-keyframes uil-pie-rotate {
+  0% {
+    -ms-transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+    -moz-transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+    -webkit-transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+    -o-transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+    transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+  }
+  100% {
+    -ms-transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+    -moz-transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+    -webkit-transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+    -o-transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+    transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+  }
+}
+@-ms-keyframes uil-pie-rotate {
+  0% {
+    -ms-transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+    -moz-transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+    -webkit-transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+    -o-transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+    transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+  }
+  100% {
+    -ms-transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+    -moz-transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+    -webkit-transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+    -o-transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+    transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+  }
+}
+@-moz-keyframes uil-pie-rotate {
+  0% {
+    -ms-transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+    -moz-transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+    -webkit-transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+    -o-transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+    transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+  }
+  100% {
+    -ms-transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+    -moz-transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+    -webkit-transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+    -o-transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+    transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+  }
+}
+@-webkit-keyframes uil-pie-rotate {
+  0% {
+    -ms-transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+    -moz-transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+    -webkit-transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+    -o-transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+    transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+  }
+  100% {
+    -ms-transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+    -moz-transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+    -webkit-transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+    -o-transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+    transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+  }
+}
+@-o-keyframes uil-pie-rotate {
+  0% {
+    -ms-transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+    -moz-transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+    -webkit-transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+    -o-transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+    transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+  }
+  100% {
+    -ms-transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+    -moz-transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+    -webkit-transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+    -o-transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+    transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+  }
+}
+@keyframes uil-pie-rotate {
+  0% {
+    -ms-transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+    -moz-transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+    -webkit-transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+    -o-transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+    transform: translate(50px, 50px) rotate(0deg) translate(-50px, -50px);
+  }
+  100% {
+    -ms-transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+    -moz-transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+    -webkit-transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+    -o-transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+    transform: translate(50px, 50px) rotate(360deg) translate(-50px, -50px);
+  }
+}
+.uil-pie-css > div {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border-radius: 100% 0 0 0;
+  background: #000;
+  opacity: 0.5;
+}
+.uil-pie-css > div:nth-child(1) {
+  background: #920;
+  -ms-animation: uil-pie-rotate 1.25s linear infinite;
+  -moz-animation: uil-pie-rotate 1.25s linear infinite;
+  -webkit-animation: uil-pie-rotate 1.25s linear infinite;
+  -o-animation: uil-pie-rotate 1.25s linear infinite;
+  animation: uil-pie-rotate 1.25s linear infinite;
+}
+.uil-pie-css > div:nth-child(2) {
+  background: #f90;
+  -ms-animation: uil-pie-rotate 1.6666666666666667s linear infinite;
+  -moz-animation: uil-pie-rotate 1.6666666666666667s linear infinite;
+  -webkit-animation: uil-pie-rotate 1.6666666666666667s linear infinite;
+  -o-animation: uil-pie-rotate 1.6666666666666667s linear infinite;
+  animation: uil-pie-rotate 1.6666666666666667s linear infinite;
+}
+.uil-pie-css > div:nth-child(3) {
+  background: #2f4;
+  -ms-animation: uil-pie-rotate 2.5s linear infinite;
+  -moz-animation: uil-pie-rotate 2.5s linear infinite;
+  -webkit-animation: uil-pie-rotate 2.5s linear infinite;
+  -o-animation: uil-pie-rotate 2.5s linear infinite;
+  animation: uil-pie-rotate 2.5s linear infinite;
+}
+.uil-pie-css > div:nth-child(4) {
+  background: #029;
+  -ms-animation: uil-pie-rotate 5s linear infinite;
+  -moz-animation: uil-pie-rotate 5s linear infinite;
+  -webkit-animation: uil-pie-rotate 5s linear infinite;
+  -o-animation: uil-pie-rotate 5s linear infinite;
+  animation: uil-pie-rotate 5s linear infinite;
+}
+
+canvas{
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
