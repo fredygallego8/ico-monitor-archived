@@ -190,7 +190,7 @@ canvas{
   height:400px;
   overflow: auto;
 }
-ul {
+.data-content ul {
   list-style-type: none;
   margin: 0;
   padding: 0;
@@ -200,7 +200,7 @@ ul {
   position: relative;
 }
 
-li {
+.data-content ul li {
   float: left;
   display: block;
   color: white;
@@ -210,16 +210,16 @@ li {
   height: 45px;
 }
 
-ul:hover {
+.data-content ul:hover {
   background-color: #111111;
 }
-li:first-child{
+.data-content ul li:first-child{
   position: absolute;
   top:20px;
   font-size: 8px;
   color: #4CAF50;
 }
-li:last-child{
+.data-content ul li:last-child{
   float: right !important;
 }
 

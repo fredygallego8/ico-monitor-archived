@@ -11,7 +11,7 @@ class CacheAdapter {
     save(...record){
         const key = this.ico.name;
         const icoData = this.get();
-        console.log(icoData);
+//        console.log(icoData);
         icoData.data.push(this.ico.toJson(record[0] , record[1])); // save result , transaction
         icoData.lastBlockNumber = record[1].blockNumber;
 

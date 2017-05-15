@@ -14,6 +14,7 @@ class ICO{
     constructor(web3,address,  name , abi){
         this.name = name;
         this.web3 = web3;
+        this.address = address;
         this.smartContract = this.web3.eth.contract(abi).at(address);
         this.currentIco = providers[name];
         this.current = new CacheAdapter(this).get();
@@ -33,13 +34,11 @@ class ICO{
     fetch(from  ,callback){
         let self = this;
         const customArgs = this.currentIco.hasOwnProperty('customArgs')?this.currentIco.customArgs:{};
-
-        let startBlockNumber = 	from; // start from the last block number
         let amount = config.skipBlocks;
 
-        from = from + amount;
-        let items = [];
-        let event = eval(`this.smartContract.${this.currentIco.event}`)(customArgs,{fromBlock:from, toBlock: from+amount});
+//        let event = eval(`this.smartContract.${this.currentIco.event}`)(customArgs,{fromBlock:from, toBlock: from+amount,topics: ["LogTake"]} );
+        let event = this.smartContract[this.currentIco.event](customArgs,{fromBlock:0, toBlock: 'latest'} );
+//        let event = this.web3.eth.filter({fromBlock:0, toBlock: 'latest', address: this.address});
 
         event.get((error, results) => {
 

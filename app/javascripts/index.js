@@ -3,10 +3,12 @@ import "../stylesheets/app.css";
 import {default as Web3} from 'web3';
 import { default as config } from './config.js';
 import jQuery from 'jquery';
+import moment from 'moment'
 
 import ICO from './ICO.js';
 import Dom from './DOM.js';
 import CacheAdapter from './CacheAdapter.js';
+import math from 'mathjs'
 
 const ProviderEngine = require('web3-provider-engine')
 const CacheSubprovider = require('web3-provider-engine/subproviders/cache.js')
@@ -19,6 +21,17 @@ const RpcSubprovider = require('web3-provider-engine/subproviders/rpc.js')
 
 let engine = new ProviderEngine();
 let web3 = new Web3(engine);
+
+let euroPerEther= 0;
+
+jQuery.ajax({
+    url: 'https://api.coinbase.com/v2/exchange-rates?currency=ETH',
+    success: function(result){
+        euroPerEther = result.data.rates['EUR'];
+        jQuery('#time').html(new Date());
+        jQuery('#ether_euro').html(euroPerEther);
+    }
+});
 
 // static results
 engine.addProvider(new FixtureSubprovider({
@@ -81,6 +94,9 @@ function init(ICONAME){
     // Get ICO data from the config
     let icoConfig = providers[ICONAME];
     let dom = new Dom();
+    dom.reset();
+    jQuery('#time').html(new Date());
+    jQuery('#ether_euro').html(euroPerEther);
 
     // ICO instance
     let ico = new ICO(web3,icoConfig['address'] , ICONAME, icoConfig['abi']);
@@ -94,13 +110,33 @@ function init(ICONAME){
      * - Make the chart more dynamic to exand the period by hours
      */
 
+    /**
+     * for statistcs
+     *
+     */
+    let startDate = null;
+    let etherTotal = 0;
+    let euroTotal = 0;
+    let tokenCreated = 0;
+    let senders = {};
+    let transactionsCount = 0;// cachedItems.length;
+    let numberInvestorsMoreThanOne100kEuro = 0;
+    let numberInvestorsBetween5to100kEruo= 0;
+    let numberInvestorsLessThan500K= 0;
+    let numberInvestorsWhoInvestedMoreThanOnce= 0;
+
+    let maxInvestments= 0;
+    let minInvestments= 99999999;
+    /** end statiscs variables*/
+
+
     let cachedData = cache.get();
     let cachedItems = cachedData['data'];
 
     let fromBlock = icoConfig.hasOwnProperty('fromBlock')?icoConfig['fromBlock']:0;
 
-    if (parseInt(cachedData.lastBlockNumber) > 0 ){
-        fromBlock = parseInt(cachedData.lastBlockNumber);
+    if (parseFloat(cachedData.lastBlockNumber) > 0 ){
+        fromBlock = parseFloat(cachedData.lastBlockNumber);
     }
 
     let toBlock = icoConfig.hasOwnProperty('toBlock')?icoConfig['toBlock']:999999;
@@ -110,7 +146,6 @@ function init(ICONAME){
         return await makePromise(web3.eth.getTransaction)(results[results.length -1].transactionHash);
     }
 
-
     async function analyzeReadyResult(item,tx ){
         let result = ico.toJson(item, tx);
 
@@ -118,16 +153,38 @@ function init(ICONAME){
         let etherValue = web3.fromWei(result.tx.value, "ether").valueOf();
         let sender = typeof icoConfig.args.sender !== "undefined" ? result.result.args[icoConfig.args.sender] : result.tx.from;
 
-
         const factor = icoConfig.hasOwnProperty('decimal') ? 10 ** icoConfig['decimal'] : 10 ** config['defaultDecimal'];
         let tokenNumbers = result.result.args[icoConfig.args.tokens].valueOf() / factor;
 
-        if (parseInt(etherValue) === 0 && tokenNumbers !== 0) {
+        if (parseFloat(etherValue) === 0 && tokenNumbers !== 0) {
             etherValue = tokenNumbers / config['defaultEtherFactor'];
         }
 
+        if(typeof senders[sender] === "undefined")
+            senders[sender] =  {tokens:0 , ethers:0 , euro:0 , times:0};
+
+        senders[sender]['ethers'] += parseFloat(etherValue);
+        senders[sender]['euro']  += parseFloat(etherValue)*parseFloat(euroPerEther) ;
+        senders[sender]['tokens'] += parseFloat(tokenNumbers);
+        senders[sender]['times'] += 1;
+
+
         // append the csv variable that define at the top by its values
         ico.appendToCSV(sender, etherValue, tokenNumbers);
+
+
+        etherTotal += parseFloat(etherValue);
+        euroTotal += parseFloat(etherValue)/euroPerEther;
+        tokenCreated += parseFloat(tokenNumbers);
+
+        dom.content('currency_raised' ,`${etherTotal} Ether` );
+        dom.content('currency_raised_euro' ,`${euroTotal} ¢` );
+        dom.content('tokens_created' ,`${tokenCreated} Tokens` );
+
+        dom.content('agv_investment_currency' ,`${etherTotal/transactionsCount}` );
+        dom.content('agv_investment_tokens' ,`${tokenCreated/transactionsCount}` );
+        dom.content('number_of_investors' ,`${Object.keys(senders).length}` );
+
 
         web3.eth.getBlock(tx.blockNumber , function (err, block) {
             if(err ) return;
@@ -141,6 +198,34 @@ function init(ICONAME){
                 ico.chartData[currentDate] = 0;
             }
             ico.chartData[currentDate] += 1;
+
+            /*
+            * @Statistics: date for ico starts
+             */
+            if(!dom.content('ico_starts')){
+                startDate = txDate;
+                dom.content('ico_starts' ,txDate );
+
+            }
+            dom.content('ico_ends' ,txDate );
+
+            if(startDate !== null){
+                let duration = moment.duration(moment(txDate).diff(moment(startDate)));
+
+                dom.content('duration' ,
+                    `
+                    <b>Y</b>: ${duration.get("years")}  -
+                      <b>M</b>: ${duration.get("months")}  -
+                      <b>D</b>: ${duration.get("days")}  - 
+                      <b>H</b>: ${duration.get("hours")}  -
+                      <b>I</b>: ${duration.get("minutes")}  -
+                      <b>S</b>: ${duration.get("seconds")}
+                    `
+
+                );
+
+            }
+
             dom.append(txDate, sender, etherValue, tokenNumbers);
         });
 
@@ -151,7 +236,7 @@ function init(ICONAME){
 
             web3.eth.getTransaction(item.transactionHash , function (err, tx) {
                 if(err) return;
-
+                console.log("TX blockNumber",tx.blockNumber)
                 // check if the ICO is cachable?  see config.js
                 if (icoConfig.hasOwnProperty('enableCache') && icoConfig.enableCache)
                     cache.save(item, tx);
@@ -162,21 +247,44 @@ function init(ICONAME){
 
     }
 
-    let transactionsCount = 0;// cachedItems.length;
 
     if(cachedItems.length > 0){
         transactionsCount = cachedItems.length;
         dom.transactionsCount(transactionsCount);
-        console.log(cachedItems);
+        //console.log(cachedItems);
         cachedItems.map((item)=>analyzeReadyResult(item.result , item.tx))
     }
 
-    let blockIterator = (from)=> {
+    let blockIterator = (from)=>{
         console.log("Inside Block",from , toBlock);
 
-        if(from-amount > toBlock) {
+        let stats = () =>{
             dom.loader(false);
-            return
+            for (let [key, value] of Object.entries(senders)) {
+                if(value['euro'] > 100000)
+                    numberInvestorsMoreThanOne100kEuro+=1;
+                if(value['euro'] > 5000 && value['euro'] <100000)
+                    numberInvestorsBetween5to100kEruo+=1;
+                if(value['euro'] < 5000)
+                    numberInvestorsLessThan500K+=1;
+                if(value['times'] > 1)
+                    numberInvestorsWhoInvestedMoreThanOnce +=1;
+                if(value['euro'] > maxInvestments)
+                    maxInvestments = value['euro'];
+
+                if(value['ethers'] < minInvestments)
+                    minInvestments=value['ethers'];
+            }
+
+
+            
+            dom.content('investors_gk100' ,`${numberInvestorsMoreThanOne100kEuro}` );
+            dom.content('investors_5100k' ,`${numberInvestorsBetween5to100kEruo}` );
+            dom.content('investors_l5k' ,`${numberInvestorsLessThan500K}` );
+            dom.content('investors_more_once' ,`${numberInvestorsWhoInvestedMoreThanOnce}` );
+            dom.content('max_investment' ,`${maxInvestments}/${0}` );
+            dom.content('min_investment' ,`${minInvestments}` );
+
         };
 
         ico.fetch(from, function (error , results) {
@@ -189,18 +297,16 @@ function init(ICONAME){
                     analyzeResults(results);
 
                     getLastTransaction(results).then(function (data) {
-                        from = from+amount;
-                        blockIterator(from);
+                        from += amount;
+                        //blockIterator(from);
                     }).catch(function (err) {
                         console.log("Error" , err  , results)
                     });
 
                 }else{ 
-                    from += amount;
+                    from += config.skipBlocksOnExceptions;
                     console.log("Zero Array", from);
-
-                    blockIterator(from);
-
+                    //blockIterator(from);
                 }
 
             })
@@ -208,6 +314,7 @@ function init(ICONAME){
     };
 
     blockIterator(fromBlock);
+
 
     dom.csvButtonOnClick(ico);
     dom.chartButtonOnClick(ico);

@@ -10,8 +10,8 @@ module.exports ={
             customArgs:{
                 _from :"0x0000000000000000000000000000000000000000"
             },
-            enableCache:true,
-            fromBlock:2607801,
+            enableCache:false,
+            fromBlock:2607800,
             toBlock:3517758
         } ,
         MelonPort:{
@@ -21,7 +21,7 @@ module.exports ={
             args:{
                 tokens: 'amount',
             },
-            enableCache:true,
+            enableCache:false,
             fromBlock:3175204,
             toBlock:3199427,
         },
@@ -33,7 +33,7 @@ module.exports ={
                 tokens:'value',
                 sender: 'to'
             },
-            enableCache:true,
+            enableCache:false,
             fromBlock:	3399337,
             toBlock:	3517648,
             decimal:6
@@ -61,10 +61,10 @@ module.exports ={
             toBlock:3517587
         }
     },
-    host:'https://mainnet.infura.io/My9Aw8U1yEqmchLYRKXK',
-//    host:'http://localhost:8545',
-    port:'8545',
-    skipBlocks:1000,
+//    host:'https://mainnet.infura.io/My9Aw8U1yEqmchLYRKXK',
+    host:'http://localhost:8545',
+    skipBlocks:200000,
+    skipBlocksOnExceptions:100,
     defaultDecimal:18,
     defaultEtherFactor:1000
 };
