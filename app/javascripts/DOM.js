@@ -130,10 +130,7 @@ class Dom{
         let chart = new ChartManager();
         jQuery('#charts').click(function() {
             jQuery('.charts').toggle();
-
             chart.draw(ico.chartData);
-            jQuery("#loader").hide();
-
         });
     }
     content(id , text = null){
@@ -141,14 +138,14 @@ class Dom{
     }
     reset(icoName){
         let date = new Date().toTimeString();
-        jQuery('span').html("");
+        jQuery('td span').html("");
         jQuery('#status').text(`${date} ${icoName} start scanning all blocks...`)
     }
     log(text){
         let date = new Date().toTimeString();
         let ico = jQuery('#smart-contract').val()
-        jQuery('#status').append(`\n ${date} ${ico} ${text}`)
-
+        console.log(`${date} ${ico} ${text}`);
+        return jQuery('#status').prepend( `${date} ${ico} ${text}\n`);
     }
 }
 

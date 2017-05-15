@@ -27,6 +27,10 @@ class CacheAdapter {
         }
         return data;
     }
+    static getBlock(){
+        let blockTimes = localStorage.getItem('blockTimes');
+        return blockTimes?JSON.parse(blockTimes):{};
+    }
 }
 
 export default CacheAdapter;
