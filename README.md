@@ -1,4 +1,6 @@
 # ICOMonitor
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/Neufund/ico-monitor.svg?token=2283404e354d5068bdda9ba6e38f7368ac6bbdfea714cfae837579c23c19904c&ts=1493976128244)](https://greenkeeper.io/)
 Simple tool written by Javascript that allow you to monitor any ICO dynamically by adding some config into config.js file, and it gives you simple chart to show the transactions per day.
 
 # Installation
