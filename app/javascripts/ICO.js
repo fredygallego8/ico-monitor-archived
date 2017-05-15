@@ -61,20 +61,25 @@ class ICO{
         this.csvContent += items.join(",") + "\n";
     }
 
-    toJson(block , tx){
-        return {
-            'result': {
-                args:block.args,
-                address:block.address,
-                transactionHash:block.transactionHash
-            },
-            'tx': {
-                from:tx.from,
-                gas:tx.gas,
-                blockNumber:tx.blockNumber,
-                to:tx.to,
-                value:tx.value
-            }}
+    toJson(block , tx = null){
+        let d = {};
+        d['result'] = {
+            args:block.args,
+            address:block.address,
+            transactionHash:block.transactionHash
+        };
+
+        if(tx){
+            d['tx']= {
+                from: tx.from,
+                    gas:tx.gas,
+                    blockNumber:tx.blockNumber,
+                    to:tx.to,
+                    value:tx.value
+            }
+        }
+        return d;
+
     }
 }
 

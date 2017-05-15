@@ -77,7 +77,7 @@ engine.on('block', function(block){
 });
 
 const providers = config.icos;
-
+let blockTimestamps = {};
 const makePromise = (func) => (...args) => new Promise((resolve, fail) =>
     func(...args, (error, result) => error ? fail(error) : resolve(result))
 );
@@ -94,7 +94,7 @@ function init(ICONAME){
     // Get ICO data from the config
     let icoConfig = providers[ICONAME];
     let dom = new Dom();
-    dom.reset();
+    dom.reset(ICONAME);
     jQuery('#time').html(new Date());
     jQuery('#ether_euro').html(euroPerEther);
 
@@ -145,11 +145,20 @@ function init(ICONAME){
     async function getLastTransaction(results) {
         return await makePromise(web3.eth.getTransaction)(results[results.length -1].transactionHash);
     }
-
-    async function analyzeReadyResult(item,tx ){
+    async function getBlockDetails(blockNumber) {
+        let block = await makePromise(web3.eth.getBlock)(blockNumber);
+        console.log(new Date(block.timestamp * 1000))
+        return new Date(block.timestamp * 1000);
+    }
+    const memoize = func => {
+        let map = {}
+        return (...args) =>
+            map[args] === undefined ? (map[args] = func(...args)) : map[args]
+    }
+    function analyzeReadyResult(item,tx ,txDate){
         let result = ico.toJson(item, tx);
 
-        //console.log(result);
+
         let etherValue = web3.fromWei(result.tx.value, "ether").valueOf();
         let sender = typeof icoConfig.args.sender !== "undefined" ? result.result.args[icoConfig.args.sender] : result.tx.from;
 
@@ -186,63 +195,88 @@ function init(ICONAME){
         dom.content('number_of_investors' ,`${Object.keys(senders).length}` );
 
 
-        web3.eth.getBlock(tx.blockNumber , function (err, block) {
-            if(err ) return;
-            //convert timestamp into date
-            let txDate = new Date(block.timestamp * 1000);
+        // get date with format d/m/y to be the uniqe key for the charts
+        let currentDate = (txDate.getDate() + '/' + (txDate.getMonth() + 1) + '/' + txDate.getFullYear());
+        if (typeof ico.chartData[currentDate] === "undefined") {
+            ico.chartData[currentDate] = 0;
+        }
+        ico.chartData[currentDate] += 1;
+
+        /*
+         * @Statistics: date for ico starts
+         */
+        if(!dom.content('ico_starts')){
+            startDate = txDate;
+            dom.content('ico_starts' ,txDate );
+
+        }
+        dom.content('ico_ends' ,txDate );
+
+        if(startDate !== null){
+            let duration = moment.duration(moment(txDate).diff(moment(startDate)));
+
+            dom.content('duration' ,
+                `
+            <b>Y</b>: ${duration.get("years")}  -
+              <b>M</b>: ${duration.get("months")}  -
+              <b>D</b>: ${duration.get("days")}  - 
+              <b>H</b>: ${duration.get("hours")}  -
+              <b>I</b>: ${duration.get("minutes")}  -
+              <b>S</b>: ${duration.get("seconds")}
+            `
+            );
+        }
+
+        for (let [key, value] of Object.entries(senders)) {
+            if(value['euro'] > 100000)
+                numberInvestorsMoreThanOne100kEuro+=1;
+            if(value['euro'] > 5000 && value['euro'] <100000)
+                numberInvestorsBetween5to100kEruo+=1;
+            if(value['euro'] < 5000)
+                numberInvestorsLessThan500K+=1;
+            if(value['times'] > 1)
+                numberInvestorsWhoInvestedMoreThanOnce +=1;
+            if(value['euro'] > maxInvestments)
+                maxInvestments = value['euro'];
+
+            if(value['ethers'] < minInvestments)
+                minInvestments=value['ethers'];
+        }
 
 
-            // get date with format d/m/y to be the uniqe key for the charts
-            let currentDate = (txDate.getDate() + '/' + (txDate.getMonth() + 1) + '/' + txDate.getFullYear());
-            if (typeof ico.chartData[currentDate] === "undefined") {
-                ico.chartData[currentDate] = 0;
-            }
-            ico.chartData[currentDate] += 1;
 
-            /*
-            * @Statistics: date for ico starts
-             */
-            if(!dom.content('ico_starts')){
-                startDate = txDate;
-                dom.content('ico_starts' ,txDate );
-
-            }
-            dom.content('ico_ends' ,txDate );
-
-            if(startDate !== null){
-                let duration = moment.duration(moment(txDate).diff(moment(startDate)));
-
-                dom.content('duration' ,
-                    `
-                    <b>Y</b>: ${duration.get("years")}  -
-                      <b>M</b>: ${duration.get("months")}  -
-                      <b>D</b>: ${duration.get("days")}  - 
-                      <b>H</b>: ${duration.get("hours")}  -
-                      <b>I</b>: ${duration.get("minutes")}  -
-                      <b>S</b>: ${duration.get("seconds")}
-                    `
-
-                );
-
-            }
-
-            dom.append(txDate, sender, etherValue, tokenNumbers);
-        });
+        dom.content('investors_gk100' ,`${numberInvestorsMoreThanOne100kEuro}` );
+        dom.content('investors_5100k' ,`${numberInvestorsBetween5to100kEruo}` );
+        dom.content('investors_l5k' ,`${numberInvestorsLessThan500K}` );
+        dom.content('investors_more_once' ,`${numberInvestorsWhoInvestedMoreThanOnce}` );
+        dom.content('max_investment' ,`${maxInvestments}/${0}` );
+        dom.content('min_investment' ,`${minInvestments}` );
+        dom.append(txDate, sender, etherValue, tokenNumbers);
 
     }
 
-    async function analyzeResults(results) {
-        results.map((item)=> {
+    async function blockTime(blockNumber) {
+        let result = await makePromise(web3.eth.getBlock)(blockNumber);
+        console.log("Fetching", blockNumber)
+        return new Date(result.timestamp * 1000);
+    }
 
+    async function analyzeResults(results) {
+        let fastBlockTime = memoize(blockTime);
+        results.map(async (item)=> {
+            let blockDate = await fastBlockTime(item.blockNumber);
+            console.log(blockDate);
             web3.eth.getTransaction(item.transactionHash , function (err, tx) {
                 if(err) return;
-                console.log("TX blockNumber",tx.blockNumber)
+                analyzeReadyResult(item , tx , blockDate);
+
                 // check if the ICO is cachable?  see config.js
                 if (icoConfig.hasOwnProperty('enableCache') && icoConfig.enableCache)
                     cache.save(item, tx);
 
-                analyzeReadyResult(item , tx);
+
             });
+
         });
 
     }
@@ -258,35 +292,6 @@ function init(ICONAME){
     let blockIterator = (from)=>{
         console.log("Inside Block",from , toBlock);
 
-        let stats = () =>{
-            dom.loader(false);
-            for (let [key, value] of Object.entries(senders)) {
-                if(value['euro'] > 100000)
-                    numberInvestorsMoreThanOne100kEuro+=1;
-                if(value['euro'] > 5000 && value['euro'] <100000)
-                    numberInvestorsBetween5to100kEruo+=1;
-                if(value['euro'] < 5000)
-                    numberInvestorsLessThan500K+=1;
-                if(value['times'] > 1)
-                    numberInvestorsWhoInvestedMoreThanOnce +=1;
-                if(value['euro'] > maxInvestments)
-                    maxInvestments = value['euro'];
-
-                if(value['ethers'] < minInvestments)
-                    minInvestments=value['ethers'];
-            }
-
-
-            
-            dom.content('investors_gk100' ,`${numberInvestorsMoreThanOne100kEuro}` );
-            dom.content('investors_5100k' ,`${numberInvestorsBetween5to100kEruo}` );
-            dom.content('investors_l5k' ,`${numberInvestorsLessThan500K}` );
-            dom.content('investors_more_once' ,`${numberInvestorsWhoInvestedMoreThanOnce}` );
-            dom.content('max_investment' ,`${maxInvestments}/${0}` );
-            dom.content('min_investment' ,`${minInvestments}` );
-
-        };
-
         ico.fetch(from, function (error , results) {
             transactionsCount += results.length;
 
@@ -294,6 +299,8 @@ function init(ICONAME){
 
             dom.loader(true,function () {
                 if(results.length > 1){
+                    dom.loader(false);
+                    dom.log(`Blocks now in memory, start analyzing them`)
                     analyzeResults(results);
 
                     getLastTransaction(results).then(function (data) {

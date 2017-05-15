@@ -139,8 +139,16 @@ class Dom{
     content(id , text = null){
         return text?jQuery(`#${id}`).html(text): jQuery(`#${id}`).html();
     }
-    reset(){
-        jQuery('span').html("")
+    reset(icoName){
+        let date = new Date().toTimeString();
+        jQuery('span').html("");
+        jQuery('#status').text(`${date} ${icoName} start scanning all blocks...`)
+    }
+    log(text){
+        let date = new Date().toTimeString();
+        let ico = jQuery('#smart-contract').val()
+        jQuery('#status').append(`\n ${date} ${ico} ${text}`)
+
     }
 }
 
