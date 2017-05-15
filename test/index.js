@@ -1,16 +1,6 @@
 /**
  * Created by mostafa on 4/10/17.
  */
-//
-// it("should pass if the minter is address", function() {
-//     // Get a reference to the deployed MetaCoin contract, as a JS object.
-//     return Coin.deployed().then(function (instance) {
-//         instance.getMinter.call().then(function(result){
-//             console.log("Minter 1 is ",result)
-//             assert.isString( result , "This is not string")
-//         });
-//     })
-// });
 
 
 import ICO from '../app/javascripts/ICO';
