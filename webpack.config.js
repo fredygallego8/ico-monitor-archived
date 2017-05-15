@@ -30,8 +30,10 @@ module.exports = {
                 exclude: /(node_modules|bower_components)/,
                 loader: 'babel-loader',
                 query: {
-                    presets: ['es2015'],
-                    plugins: ['transform-runtime']
+                    presets: ['es2015','stage-0'],
+                    plugins: ['syntax-async-functions','transform-regenerator'],
+                    optional: ['runtime']
+
                 }
             }
         ]
