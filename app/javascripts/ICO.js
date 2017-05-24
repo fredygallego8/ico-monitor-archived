@@ -1,17 +1,16 @@
 import CacheAdapter from './CacheAdapter.js'
-import { default as config } from './config.js'
+import {default as config} from './config.js'
 import 'babel-polyfill';
 
 const providers = config.icos;
 
 
-
 //let tx = await makePromise(web3.eth.getTransaction)('latest');
 
 
-class ICO{
+class ICO {
 
-    constructor(web3,address,  name , abi){
+    constructor(web3, address, name, abi) {
         this.name = name;
         this.web3 = web3;
         this.address = address;
@@ -22,66 +21,66 @@ class ICO{
         this.blockNumbers = this.current.lastBlockNumber;
         this.csvContent = "data:text/csv;charset=utf-8,";
         this.csvContent += ["Transaction Maker", "Value in Eth", "Number of token"].join(",") + "\n";
-        this.chartData = {};
+        this.chartData = {
+            d: {}, h: {}, m: {}
+        };
 
     }
-    getBlockNumbers(){
+
+    getBlockNumbers() {
         return this.blockNumbers;
     }
-    getTransaction(results){
+
+    getTransaction(results) {
 
     }
-    fetch(from  ,callback){
-        const customArgs = this.currentIco.hasOwnProperty('customArgs')?this.currentIco.customArgs:{};
+
+    fetch(from, callback) {
+        const customArgs = this.currentIco.hasOwnProperty('customArgs') ? this.currentIco.customArgs : {};
         let amount = config.skipBlocks;
         let configToBlock = this.currentIco.toBlock;
 
-//        let event = eval(`this.smartContract.${this.currentIco.event}`)(customArgs,{fromBlock:from, toBlock: from+amount,topics: ["LogTake"]} );
-        if(typeof from === "string") {
+        if (typeof from === "string") {
             return;
-        };
+        }
 
-        let toBlock = configToBlock-from < 100000?'latest':from+amount;
 
-        let event = this.smartContract[this.currentIco.event](customArgs,{fromBlock:from, toBlock: toBlock} );
-//        let event = this.web3.eth.filter({fromBlock:0, toBlock: 'latest', address: this.address});
+        let toBlock = configToBlock - from < 100000 ? 'latest' : from + amount;
+        console.log(customArgs);
+        let event = this.smartContract[this.currentIco.event](customArgs, {fromBlock: from, toBlock: toBlock});
 
         event.get((error, results) => {
-
-            if (error && results.length === 0) {
-                console.log("ERROR", error);
-                callback(error , null, null);
-                return;
-            }
-            callback(null, results , toBlock);
+            if (error || results === undefined)
+                return callback(error, null, null);
+            callback(null, results, toBlock);
         });
 
     }
 
-    generateCSV(){
+    generateCSV() {
         let encodedUri = encodeURI(this.csvContent);
         window.open(encodedUri);
     }
 
-    appendToCSV(...items){
+    appendToCSV(...items) {
         this.csvContent += items.join(",") + "\n";
     }
 
-    toJson(block , tx = null){
+    toJson(block, tx = null) {
         let d = {};
         d['result'] = {
-            args:block.args,
-            address:block.address,
-            transactionHash:block.transactionHash
+            args: block.args,
+            address: block.address,
+            transactionHash: block.transactionHash
         };
 
-        if(tx){
-            d['tx']= {
+        if (tx) {
+            d['tx'] = {
                 from: tx.from,
-                    gas:tx.gas,
-                    blockNumber:tx.blockNumber,
-                    to:tx.to,
-                    value:tx.value
+                gas: tx.gas,
+                blockNumber: tx.blockNumber,
+                to: tx.to,
+                value: tx.value
             }
         }
         return d;

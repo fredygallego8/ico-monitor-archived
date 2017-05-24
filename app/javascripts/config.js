@@ -13,7 +13,7 @@ module.exports ={
             },
             enableCache:false,
             fromBlock:2607800,
-            toBlock:3517758 ,
+            toBlock:3607800,
             etherFactor:1000
         } ,
         MelonPort:{
@@ -69,11 +69,26 @@ module.exports ={
             fromBlock:1429008,
             toBlock:3564002,
             etherFactor:1000
+        },
+        HumaniqToken:{
+            address:'0x9734c136F5c63531b60D02548Bca73a3d72E024D',
+            abi:[{"constant":false,"inputs":[{"name":"newAddress","type":"address"}],"name":"changeEmissionContractAddress","outputs":[{"name":"","type":"bool"}],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"_spender","type":"address"},{"name":"_value","type":"uint256"}],"name":"approve","outputs":[{"name":"success","type":"bool"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"value","type":"bool"}],"name":"lock","outputs":[],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"_from","type":"address"},{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transferFrom","outputs":[{"name":"success","type":"bool"}],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"emissionContractAddress","outputs":[{"name":"","type":"address"}],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"_for","type":"address"},{"name":"tokenCount","type":"uint256"}],"name":"issueTokens","outputs":[{"name":"","type":"bool"}],"payable":true,"type":"function"},{"constant":true,"inputs":[],"name":"founder","outputs":[{"name":"","type":"address"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"_owner","type":"address"}],"name":"balanceOf","outputs":[{"name":"balance","type":"uint256"}],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transfer","outputs":[{"name":"success","type":"bool"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"_owner","type":"address"},{"name":"_spender","type":"address"}],"name":"allowance","outputs":[{"name":"remaining","type":"uint256"}],"payable":false,"type":"function"},{"inputs":[{"name":"_founder","type":"address"}],"type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"name":"from","type":"address"},{"indexed":true,"name":"to","type":"address"},{"indexed":false,"name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"owner","type":"address"},{"indexed":true,"name":"spender","type":"address"},{"indexed":false,"name":"value","type":"uint256"}],"name":"Approval","type":"event"}],
+            event:'Transfer',
+            args:{
+                tokens:'value',
+                sender:'to'
+            },
+            enableCache:false,
+            fromBlock:2809028,
+            toBlock:3563636,
+            etherFactor:1000,
+            decimal:0,
         }
     },
-//    host:'https://mainnet.infura.io/My9Aw8U1yEqmchLYRKXK',
-    host:'http://localhost:8545',
-    skipBlocks:100000,
+    // host:'https://mainnet.infura.io/My9Aw8U1yEqmchLYRKXK',
+    host:'https://mainnet.infura.io/33uWXyqdb2ZEons5VtEm',
+    // host:'http://localhost:8545',
+    skipBlocks:1000000,
     skipBlocksOnExceptions:10000,
     defaultDecimal:18,
     defaultEtherFactor:1000,

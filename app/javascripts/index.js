@@ -9,25 +9,22 @@ import ICO from './ICO.js';
 import Dom from './DOM.js';
 import CacheAdapter from './CacheAdapter.js';
 
-const ProviderEngine = require('web3-provider-engine')
-const CacheSubprovider = require('web3-provider-engine/subproviders/cache.js')
-const FixtureSubprovider = require('web3-provider-engine/subproviders/fixture.js')
-const FilterSubprovider = require('web3-provider-engine/subproviders/filters.js')
-const VmSubprovider = require('web3-provider-engine/subproviders/vm.js')
-const HookedWalletSubprovider = require('web3-provider-engine/subproviders/hooked-wallet.js')
-const NonceSubprovider = require('web3-provider-engine/subproviders/nonce-tracker.js')
-const RpcSubprovider = require('web3-provider-engine/subproviders/rpc.js')
+const ProviderEngine = require('web3-provider-engine');
+const CacheSubprovider = require('web3-provider-engine/subproviders/cache.js');
+const FixtureSubprovider = require('web3-provider-engine/subproviders/fixture.js');
+const FilterSubprovider = require('web3-provider-engine/subproviders/filters.js');
+const VmSubprovider = require('web3-provider-engine/subproviders/vm.js');
+const HookedWalletSubprovider = require('web3-provider-engine/subproviders/hooked-wallet.js');
+const NonceSubprovider = require('web3-provider-engine/subproviders/nonce-tracker.js');
+const RpcSubprovider = require('web3-provider-engine/subproviders/rpc.js');
 
-
-let engine = new ProviderEngine();
-let web3 = new Web3(engine);
 
 let currencyPerEther= {};
 
 jQuery.ajax({
     url: 'https://api.coinbase.com/v2/exchange-rates?currency=ETH',
     success: function(result){
-        console.log(result.data)
+        console.log(result.data);
         config.supportedCurrencies.map(function (currency) {
             jQuery('#currency-selector').append(`<option value="${result.data.rates[currency]}">${currency}</option>`);
         });
@@ -41,6 +38,10 @@ jQuery.ajax({
 
     }
 });
+
+let engine = new ProviderEngine();
+let web3 = new Web3(engine);
+
 
 // static results
 engine.addProvider(new FixtureSubprovider({
@@ -73,17 +74,17 @@ engine.addProvider(new HookedWalletSubprovider({
 
 // data source
 engine.addProvider(new RpcSubprovider({
-    rpcUrl: `${config.host}`,
+    rpcUrl:`${config.host}`,
 }));
 
 engine.start();
 
 // log new blocks
-engine.on('block', function(block){
-    console.log('================================');
-    console.log('BLOCK CHANGED:', '#'+block.number.toString('hex'), '0x'+block.hash.toString('hex'));
-    console.log('================================');
-});
+// engine.on('block', function(block){
+//     console.log('================================');
+//     console.log('BLOCK CHANGED:', '#'+block.number.toString('hex'), '0x'+block.hash.toString('hex'));
+//     console.log('================================');
+// });
 
 const providers = config.icos;
 
@@ -91,15 +92,17 @@ const makePromise = (func) => (...args) => new Promise((resolve, fail) =>
     func(...args, (error, result) => error ? fail(error) : resolve(result))
 );
 
-const memoize = func => {
-    const data = CacheAdapter.getBlock()
-    let map = data?data:{};
-    return (...args) =>
-        map[args] === undefined ? (map[args] = func(...args)) : map[args];
-};
+// const memoize = func => {
+//     const data = CacheAdapter.getBlock()
+//     let map = data?data:{};
+//     return (...args) =>
+//         map[args] === undefined ? (map[args] = func(...args)) : map[args];
+//     map[item.blockNumber] = txDate;
+//     localStorage.setItem(`blockTimes-${blockNumber}`, date);
+// };
 
 /**
- * for statistcs
+ * for statistics
  *
  */
 let startDate = null;
@@ -113,26 +116,27 @@ let numberInvestorsBetween5to100kEruo= 0;
 let numberInvestorsLessThan500K= 0;
 let numberInvestorsWhoInvestedMoreThanOnce= 0;
 
-let maxInvestments= 0;
-let minInvestments= 99999999;
-/** end statiscs variables*/
+let maxInvestmentsMoney= 0;
+let maxInvestmentsTokens= 0;
+let minInvestments= 999999999999;
+/** end statistics variables*/
 
 let dom = new Dom();
 
 function refreshResults(){
 
-    maxInvestments= 0;
+    maxInvestmentsMoney= 0;
+    maxInvestmentsTokens= 0;
     minInvestments= 99999999;
     numberInvestorsMoreThanOne100kEuro = 0;
     numberInvestorsBetween5to100kEruo= 0;
     numberInvestorsLessThan500K= 0;
     numberInvestorsWhoInvestedMoreThanOnce= 0;
 
-    dom.content('currency_raised_euro' ,`${etherTotal*currencyPerEther.value} ${currencyPerEther.name}` );
-
+    dom.content('currency_raised_euro' ,`${formatNumber(etherTotal*currencyPerEther.value)} ${currencyPerEther.name}` );
+    console.log('\n start calculatin');
     for (let [key, value] of Object.entries(senders)) {
         let currencyValue = value['ethers']*currencyPerEther.value;
-
         if(currencyValue > 100000)
             numberInvestorsMoreThanOne100kEuro+=1;
         if(currencyValue > 5000 && currencyValue <100000)
@@ -142,24 +146,31 @@ function refreshResults(){
         if(value['times'] > 1)
             numberInvestorsWhoInvestedMoreThanOnce +=1;
 
-        if(currencyValue > maxInvestments)
-            maxInvestments = `${currencyValue} ${currencyPerEther.name}  / ${value['ethers']} Ether`;
+        if(currencyValue > maxInvestmentsMoney){
+            maxInvestmentsMoney = currencyValue;
+            maxInvestmentsTokens = value['tokens']
+        }
 
         if(value['ethers'] < minInvestments)
             minInvestments=value['ethers'];
     }
 
-
-
-    dom.content('investors_gk100' ,`${numberInvestorsMoreThanOne100kEuro}` );
-    dom.content('investors_5100k' ,`${numberInvestorsBetween5to100kEruo}` );
-    dom.content('investors_l5k' ,`${numberInvestorsLessThan500K}` );
-    dom.content('investors_more_once' ,`${numberInvestorsWhoInvestedMoreThanOnce}` );
-    dom.content('max_investment' ,`${maxInvestments}` );
-    dom.content('min_investment' ,`${minInvestments}` );
+    dom.content('investors_gk100' ,`${formatNumber(numberInvestorsMoreThanOne100kEuro)}` );
+    dom.content('investors_5100k' ,`${formatNumber(numberInvestorsBetween5to100kEruo)}` );
+    dom.content('investors_l5k' ,`${formatNumber(numberInvestorsLessThan500K)}` );
+    dom.content('investors_more_once' ,`${formatNumber(numberInvestorsWhoInvestedMoreThanOnce)}` );
+    dom.content('max_investment' ,`${formatNumber(maxInvestmentsMoney)} ${currencyPerEther.name}  / ${formatNumber(maxInvestmentsTokens)} Token` );
+    dom.content('min_investment' ,`${formatNumber(minInvestments)}` );
 
 }
 
+function formatNumber(number){
+    if (number === undefined || !number || typeof number !== "number")
+        return number;
+    return number.toFixed(2).replace(/./g, function(c, i, a) {
+        return i && c !== "." && ((a.length - i) % 3 === 0) ? ',' + c : c;
+    });
+}
 
 /**
  * @init
@@ -201,7 +212,7 @@ function init(ICONAME){
     senders = {};
     transactionsCount = 0;// cachedItems.length;
 
-    /** end statiscs variables*/
+    /** end statistica variables*/
 
     let cachedData = cache.get();
     let cachedItems = cachedData['data'];
@@ -215,18 +226,8 @@ function init(ICONAME){
     let toBlock = icoConfig.hasOwnProperty('toBlock')?icoConfig['toBlock']:999999;
 
     async function analyzeReadyResult(item){
-        let fastBlockTime = memoize(blockTime);
-        let txDate = await fastBlockTime(item.blockNumber);
-
-        let dates = CacheAdapter.getBlock() //JSON.parse(localStorage.getItem('blockTimes'));
-        dates[item.blockNumber] = txDate;
-        localStorage.setItem('blockTimes',JSON.stringify(dates));
-
-        if(typeof txDate === "string")
-            txDate = new Date(txDate);
-
-
-//        console.log(`Analyzing ${item.blockNumber}`);
+        // console.log(item)
+        let txDate = await blockTime(item.blockNumber);
 
         let result = ico.toJson(item);
         console.log(`Analyzing ${item.blockNumber}`);
@@ -254,13 +255,24 @@ function init(ICONAME){
         etherTotal += parseFloat(etherValue);
         tokenCreated += parseFloat(tokenNumbers);
 
-
         // get date with format d/m/y to be the uniqe key for the charts
-        let currentDate = (txDate.getDate() + '/' + (txDate.getMonth() + 1) + '/' + txDate.getFullYear());
-        if (typeof ico.chartData[currentDate] === "undefined") {
-            ico.chartData[currentDate] = 0;
-        }
-        ico.chartData[currentDate] += 1;
+        let currentDatePerMinutes = `${txDate.getDate()}/${txDate.getMonth() + 1}/${txDate.getFullYear()}  ${txDate.getHours()}:${txDate.getMinutes()}`;
+        let currentDatePerHours= `${txDate.getDate()}/${txDate.getMonth() + 1}/${txDate.getFullYear()}:${txDate.getHours()}}`;
+
+        let currentDate = `${txDate.getDate()}/${txDate.getMonth() + 1}/${txDate.getFullYear()}`;
+
+        if (typeof ico.chartData['d'][currentDate] === "undefined")
+            ico.chartData['d'][currentDate] = 0;
+        ico.chartData['d'][currentDate] += 1;
+
+        if (typeof ico.chartData['h'][currentDatePerHours] === "undefined")
+            ico.chartData['h'][currentDatePerHours] = 0;
+        ico.chartData['h'][currentDatePerHours] += 1;
+
+        if (typeof ico.chartData['m'][currentDatePerMinutes] === "undefined")
+            ico.chartData['m'][currentDatePerMinutes] = 0;
+        ico.chartData['m'][currentDatePerMinutes] += 1;
+
 
         /*
          * @Statistics: date for ico starts
@@ -274,14 +286,22 @@ function init(ICONAME){
     }
 
     async function blockTime(blockNumber) {
-        let result = await makePromise(web3.eth.getBlock)(blockNumber);
+        let cacheKey = `blockTimes-${blockNumber}`;
+        let cached = localStorage.getItem(cacheKey);
+        if(cached) {
+            return new Date(cached * 1000);
+        }
+
         console.log(`Caching this timestamp form block number blockNumber ${blockNumber}`);
         dom.log(`Fetching ${blockNumber} timestamp`);
+        let result = await makePromise(web3.eth.getBlock)(blockNumber, false);
+        localStorage.setItem(cacheKey, result.timestamp);
         return new Date(result.timestamp * 1000);
     }
 
 
     async function analyzeResults(results) {
+        console.log("Result is ",results)
         let txDate = null;
         for ( let i = 0,j=results.length-1; i < results.length/2 ; i++ , j--){
             let item = results[i];
@@ -290,12 +310,14 @@ function init(ICONAME){
 
         }
 
-        dom.content('currency_raised' ,`${etherTotal} Ether` );
-        dom.content('tokens_created' ,`${tokenCreated} Tokens` );
 
-        dom.content('agv_investment_currency' ,`${etherTotal/transactionsCount}` );
-        dom.content('agv_investment_tokens' ,`${tokenCreated/transactionsCount}` );
-        dom.content('number_of_investors' ,`${Object.keys(senders).length}` );
+        
+        dom.content('currency_raised' ,`${formatNumber(etherTotal)} Ether` );
+        dom.content('tokens_created' ,`${formatNumber(tokenCreated)} Tokens` );
+
+        dom.content('agv_investment_currency' ,`${formatNumber(etherTotal/transactionsCount)}` );
+        dom.content('agv_investment_tokens' ,`${formatNumber(tokenCreated/transactionsCount)}` );
+        dom.content('number_of_investors' ,`${formatNumber(Object.keys(senders).length)}` );
 
         dom.content('ico_ends' ,txDate );
 
@@ -333,7 +355,13 @@ function init(ICONAME){
         console.log("Inside Block",from , toBlock);
 
         ico.fetch(from, function (error , results, to) {
-            console.log("Count of results",results.length , `Period: ${from}:${to}`)
+            console.log(results);
+            if ( error ){
+                console.log(error );
+                console.log(`Try again`);
+                return blockIterator(from);
+            }
+            console.log("Count of results",results.length , `Period: ${from}:${to}`);
             transactionsCount += results.length;
 
             dom.transactionsCount(transactionsCount);
@@ -363,14 +391,11 @@ function init(ICONAME){
                         storageData = storageData.concat(results);
                         dom.log(`Blocks now in memory From: ${from}- To: ${to}`);
                         from = to;
-                        blockIterator(from);
-
                     } else {
                         from += config.skipBlocksOnExceptions;
                         console.log("Zero Array", from);
-                        blockIterator(from);
                     }
-
+                    blockIterator(from);
                 });
             }
         });
@@ -378,8 +403,8 @@ function init(ICONAME){
 
     blockIterator(fromBlock);
 
-
     dom.csvButtonOnClick(ico);
+
     dom.chartButtonOnClick(ico);
 
 };

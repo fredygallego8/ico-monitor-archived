@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Neufund Anlyzer</title>
+  <title>Neufund ICO Monitor</title>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -18,7 +18,7 @@
   <div id="loader" class='uil-pie-css'><div></div><div></div><div></div><div></div></div>
   <div id = "app"></div>
 
-  <h1>Neufund Analyser</h1>
+  <h1>Neufund ICO Monitor</h1>
 
   <div class="well">
     <div class="row">
@@ -53,8 +53,8 @@
           <tr><th>currency raised <span class="currency"></span></th><td><span class="" id="currency_raised_euro">0</span></td></tr>
           <tr><th>Tokens created </th><td><span class="" id="tokens_created">0</span></td></tr>
           <tr><th>Number of investors </th><td><span class="" id="number_of_investors">0</span></td></tr>
-          <tr><th>Average investment size in currency) </th><td><span class="badge" id="agv_investment_currency">0</span></td></tr>
-          <tr><th>Average investment size in Tokens) </th><td><span class="badge" id="agv_investment_tokens">0</span></td></tr>
+          <tr><th>Average investment size in currency) </th><td><span class="" id="agv_investment_currency">0</span></td></tr>
+          <tr><th>Average investment size in Tokens) </th><td><span class="" id="agv_investment_tokens">0</span></td></tr>
         </table>
 
         <br/>
@@ -82,7 +82,18 @@
           <tr><th>Ether/<span class="currency"></span></th><td><span id="ether_euro"></span></td></tr>
 
         </table>
-        <button id="charts" href="#">Charts</button>
+
+        <div class="row">
+          <select class="" id="time_filter">
+            <option value="d" >Select time filter..</option>
+            <option value="d">Days</option>
+            <option value="h">Hours</option>
+            <option value="m">Minutes</option>
+          </select>
+          <button class="btn btn-success" id="charts" href="#">Charts Toggle</button>
+
+        </div>
+
       </div>
     </div>
     <br>

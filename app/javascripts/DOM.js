@@ -27,7 +27,8 @@ class ChartManager{
          * @todo
          * Enhance the performance much better
          */
-        console.log(chartData);
+        console.log(chartData)
+
         let chartDataArray = [];
         let keys = [];
         Object.keys(chartData).map(function(key, index) {
@@ -126,12 +127,18 @@ class Dom{
         });
     }
 
-    chartButtonOnClick(ico){
+    chartButtonOnClick(ico ){
+
         let chart = new ChartManager();
-        jQuery('#charts').click(function() {
+        jQuery('#charts').click(()=>{
+            let type = this.getFilterTypeValue();
             jQuery('.charts').toggle();
-            chart.draw(ico.chartData);
+            console.log(type , ico.chartData);
+            chart.draw(ico.chartData[type]);
         });
+    }
+    getFilterTypeValue(){
+        return jQuery('#time_filter option:selected').val();
     }
     content(id , text = null){
         return text?jQuery(`#${id}`).html(text): jQuery(`#${id}`).html();
@@ -144,7 +151,7 @@ class Dom{
     log(text){
         let date = new Date().toTimeString();
         let ico = jQuery('#smart-contract').val()
-        console.log(`${date} ${ico} ${text}`);
+
         return jQuery('#status').prepend( `${date} ${ico} ${text}\n`);
     }
 }
